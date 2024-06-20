@@ -9,6 +9,9 @@ export class JobRepository {
   ): Promise<{ jobs: Job[]; total: number }> {
     const total = await prisma.job.count();
     const jobs = await prisma.job.findMany({
+      include: {
+        company: true,
+      },
       skip: (page - 1) * pageSize,
       take: pageSize,
       orderBy: { id: 'asc' },
