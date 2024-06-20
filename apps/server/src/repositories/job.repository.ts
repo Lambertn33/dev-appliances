@@ -1,4 +1,4 @@
-import { PrismaClient, Job } from "@prisma/client";
+import { PrismaClient, Job, Company } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -11,7 +11,7 @@ export class JobRepository {
     const jobs = await prisma.job.findMany({
       skip: (page - 1) * pageSize,
       take: pageSize,
-      orderBy: { id: "asc" },
+      orderBy: { id: 'asc' },
     });
 
     return { jobs, total };
@@ -23,6 +23,13 @@ export class JobRepository {
     companyId: number
   ): Promise<Job> {
     return prisma.job.create({ data: { name, description, companyId } });
+  }
+
+  async getJob(id: number): Promise<Job & { company: Company | null }> {
+    return prisma.job.findUnique({
+      where: { id },
+      include: { company: true },
+    });
   }
 
   async deleteJob(id: number): Promise<void> {

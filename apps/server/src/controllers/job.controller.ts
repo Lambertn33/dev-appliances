@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { JobRepository } from "../repositories/job.repository";
+import { Request, Response } from 'express';
+import { JobRepository } from '../repositories/job.repository';
 
-import { validationResult } from "express-validator";
+import { validationResult } from 'express-validator';
 
 const jobRepository = new JobRepository();
 
@@ -24,8 +24,17 @@ export const addJob = async (req: Request, res: Response) => {
   res.status(201).json(job);
 };
 
+export const getJob = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const job = await jobRepository.getJob(Number(id));
+  if (!job) {
+    return res.status(404).json({ error: 'Job not found' });
+  }
+  res.status(200).json(job);
+};
+
 export const removeJob = async (req: Request, res: Response) => {
   const { id } = req.params;
   await jobRepository.deleteJob(Number(id));
-  res.status(200).json({ message: "job deleted successfully" });
+  res.status(200).json({ message: 'job deleted successfully' });
 };
