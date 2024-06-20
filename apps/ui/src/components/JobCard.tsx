@@ -21,8 +21,4 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
   );
 };
 
-const navigateToJobDetails = (jobId: number) => {
-  console.log(`Navigate to job details for job ID: ${jobId}`);
-};
-
 export default JobCard;
