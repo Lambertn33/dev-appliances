@@ -2,7 +2,10 @@
   "name": "@appliances/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "server": "npx nx serve server",
+    "ui": "npx nx dev ui"
+  },
   "private": true,
   "dependencies": {
     "@prisma/client": "^5.15.1",
