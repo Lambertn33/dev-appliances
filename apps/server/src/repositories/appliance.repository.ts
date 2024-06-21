@@ -1,4 +1,4 @@
-import { PrismaClient, Appliance } from "@prisma/client";
+import { PrismaClient, Appliance } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -18,7 +18,7 @@ export class ApplianceRepository {
     });
 
     if (!job) {
-      throw new Error("Job not found");
+      throw new Error('Job not found');
     }
 
     const appliance = await prisma.appliance.create({

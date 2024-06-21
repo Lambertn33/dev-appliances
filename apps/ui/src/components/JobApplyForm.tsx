@@ -1,10 +1,10 @@
 'use client';
 
-import axios from 'axios';
 import React, { FC, useState } from 'react';
 import { useJobDetails } from 'apps/ui/src/hooks/useJobDetails';
 import { useParams } from 'next/navigation';
 import { Job } from '../interfaces';
+import Link from 'next/link';
 
 interface JobApplyFormProps {
   job: Job;
@@ -18,6 +18,8 @@ const JobApplyForm: FC<JobApplyFormProps> = ({}) => {
     loading: boolean;
     error: string | null;
     success: boolean;
+    applicantEmail: string | null;
+    companyEmail: string | null;
   }>({
     userName: '',
     userEmail: '',
@@ -25,6 +27,8 @@ const JobApplyForm: FC<JobApplyFormProps> = ({}) => {
     loading: false,
     error: null,
     success: false,
+    applicantEmail: null,
+    companyEmail: null,
   });
 
   const params = useParams<{ id: string }>();
@@ -51,16 +55,27 @@ const JobApplyForm: FC<JobApplyFormProps> = ({}) => {
     }));
 
     try {
-      await axios.post('/api/appliances', {
-        jobId: job?.id,
-        userName: application.userName,
-        userEmail: application.userEmail,
-        text: application.applicationText,
+      const response = await fetch('/api/appliances', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          jobId: job?.id,
+          userName: application.userName,
+          userEmail: application.userEmail,
+          text: application.applicationText,
+        }),
       });
-      setApplication((prevState) => ({
-        ...prevState,
-        success: true,
-      }));
+      if (response && response.status === 200) {
+        const data = await response.json();
+        setApplication((prevState) => ({
+          ...prevState,
+          success: true,
+          applicantEmail: data.applicantPreviewUrl,
+          companyEmail: data.companyPreviewUrl,
+        }));
+      }
     } catch (error) {
       setApplication((prevState) => ({
         ...prevState,
@@ -79,8 +94,30 @@ const JobApplyForm: FC<JobApplyFormProps> = ({}) => {
 
   if (application.success) {
     return (
-      <div className="container mx-auto px-4 mt-8">
-        Application submitted successfully!
+      <div className="container mx-auto px-4 mt-8 flex flex-col">
+        <span className="text-2xl text-center font-bold">
+          Application submitted successfully!
+        </span>
+        <div className="mt-2 flex flex-col gap-2">
+          <span className="text-blue-400 hover:text-blue-600 cursor-pointer">
+            <a target="_blank" href={`${application.companyEmail}`}>
+              click to view email sent to company
+            </a>
+          </span>
+          <span className="text-blue-400 hover:text-blue-600 cursor-pointer">
+            <a target="_blank" href={`${application.companyEmail}`}>
+              click to view email sent to applicant
+            </a>
+          </span>
+        </div>
+        <div className="flex justify-center">
+          <Link
+            href="/"
+            className="text-center bg-blue-400 px-2 py-1 rounded-md text-white font-bold"
+          >
+            return to jobs List
+          </Link>
+        </div>
       </div>
     );
   }
@@ -101,6 +138,7 @@ const JobApplyForm: FC<JobApplyFormProps> = ({}) => {
           <input
             type="text"
             id="userName"
+            name="userName"
             className="mt-1 block w-full border border-gray-500 rounded-md py-1 px-2"
             value={application.userName}
             onChange={handleInputChange}
@@ -117,6 +155,7 @@ const JobApplyForm: FC<JobApplyFormProps> = ({}) => {
           <input
             type="email"
             id="userEmail"
+            name="userEmail"
             className="mt-1 block w-full border border-gray-500 rounded-md py-1 px-2"
             value={application.userEmail}
             onChange={handleInputChange}
@@ -135,6 +174,7 @@ const JobApplyForm: FC<JobApplyFormProps> = ({}) => {
             className="mt-1 block w-full border border-gray-500 rounded-md py-1 px-2"
             value={application.applicationText}
             onChange={handleInputChange}
+            name="applicationText"
             rows={4}
             required
           />

@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
-import { ApplianceRepository } from "../repositories/appliance.repository";
-import { validationResult } from "express-validator";
-import nodemailer from "nodemailer";
+import { Request, Response } from 'express';
+import { ApplianceRepository } from '../repositories/appliance.repository';
+import { validationResult } from 'express-validator';
+import nodemailer from 'nodemailer';
 
-import { receiveApplicationFromUser, sendApplicationToCompany } from "../mail";
+import { receiveApplicationFromUser, sendApplicationToCompany } from '../mail';
 
 const applianceRepository = new ApplianceRepository();
 
@@ -48,6 +48,7 @@ export const applyForJob = async (req: Request, res: Response) => {
       companyPreviewUrl: nodemailer.getTestMessageUrl(companyInfo),
     });
   } catch (error: any) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 };
