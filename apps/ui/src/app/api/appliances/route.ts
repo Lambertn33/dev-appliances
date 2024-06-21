@@ -13,7 +13,7 @@ export async function POST(req: Request, res: Response) {
     const { text, jobId, userEmail, userName } =
       (await req.json()) as unknown as ApplyRequestBody;
     const response = await axios.post(
-      'http://localhost:3000/appliances',
+      `${process.env.NEXT_PUBLIC_API_URL}/appliances`,
       {
         userName,
         userEmail,
