@@ -26,7 +26,7 @@ export const addJob = async (req: Request, res: Response) => {
 
 export const getJob = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const job = await jobRepository.getJob(Number(id));
+  const job = await jobRepository.getJob(Number(+id));
   if (!job) {
     return res.status(404).json({ error: 'Job not found' });
   }
